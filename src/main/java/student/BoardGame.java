@@ -1,8 +1,6 @@
 package student;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents a board game with attributes such as players, playtime, difficulty, rating, and rank.
@@ -132,6 +130,96 @@ public class BoardGame implements Comparable<BoardGame> {
         };
     }
 
+    /**
+     * Returns the string value of the game attribute based on the given GameData type.
+     *
+     * @param col The GameData attribute
+     * @return The corresponding string value
+     * @throws IllegalArgumentException If the attribute is not a string
+     */
+    public String getStringValue(GameData col) throws IllegalArgumentException {
+        if (col == GameData.NAME) {
+            return name;
+        }
+        throw new IllegalArgumentException("Invalid string column: " + col);
+    }
+
+    /**
+     * Returns a formatted string containing the game name and the specified attribute value.
+     *
+     * @param col The GameData attribute
+     * @return A formatted string with the game name and the specified attribute
+     */
+    public String toStringWithInfo(GameData col) {
+        return switch (col) {
+            case NAME -> name;
+            case RATING -> String.format("%s (%.2f)", name, averageRating);
+            case DIFFICULTY -> String.format("%s (%.2f)", name, difficulty);
+            case RANK -> String.format("%s (%d)", name, rank);
+            case MIN_PLAYERS -> String.format("%s (%d)", name, minPlayers);
+            case MAX_PLAYERS -> String.format("%s (%d)", name, maxPlayers);
+            case MIN_TIME -> String.format("%s (%d min)", name, minPlayTime);
+            case MAX_TIME -> String.format("%s (%d min)", name, maxPlayTime);
+            case YEAR -> String.format("%s (%d)", name, yearPublished);
+            default -> name;
+        };
+    }
+
+    /**
+     * Returns a string representation of the BoardGame object.
+     *
+     * @return A string containing all game attributes in the correct order
+     */
+    @Override
+    public String toString() {
+        return String.format(
+                "BoardGame{name='%s', id=%d, minPlayers=%d, maxPlayers=%d, maxPlayTime=%d, minPlayTime=%d, " +
+                        "difficulty=%.1f, rank=%d, averageRating=%.1f, yearPublished=%d}",
+                name, id, minPlayers, maxPlayers, maxPlayTime, minPlayTime,
+                difficulty, rank, averageRating, yearPublished
+        );
+    }
+
+
+    /**
+     * Checks if two BoardGame objects are equal.
+     *
+     * @param obj The object to compare
+     * @return True if the objects are equal, otherwise false
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        BoardGame boardGame = (BoardGame) obj;
+        return id == boardGame.id &&
+                minPlayers == boardGame.minPlayers &&
+                maxPlayers == boardGame.maxPlayers &&
+                maxPlayTime == boardGame.maxPlayTime &&
+                minPlayTime == boardGame.minPlayTime &&
+                Double.compare(boardGame.difficulty, difficulty) == 0 &&
+                rank == boardGame.rank &&
+                Double.compare(boardGame.averageRating, averageRating) == 0 &&
+                yearPublished == boardGame.yearPublished &&
+                name.equals(boardGame.name);
+    }
+
+    /**
+     * Computes the hash code for the BoardGame object.
+     *
+     * @return The hash code of the object
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, id, minPlayers, maxPlayers, minPlayTime, maxPlayTime, difficulty, rank, averageRating, yearPublished);
+    }
+
+    /**
+     * Compares two BoardGame objects by name (case-insensitive).
+     *
+     * @param other The other BoardGame object
+     * @return Comparison result based on name
+     */
     @Override
     public int compareTo(BoardGame other) {
         return this.name.compareToIgnoreCase(other.name);

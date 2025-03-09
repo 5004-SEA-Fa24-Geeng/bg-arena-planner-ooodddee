@@ -81,12 +81,28 @@ public class GameList implements IGameList {
         }
 
         try {
-            Optional<BoardGame> game = filteredList.stream()
-                    .filter(g -> g.getName().equalsIgnoreCase(str))
-                    .findFirst();
-            game.ifPresentOrElse(games::add, () -> {
-                throw new IllegalArgumentException("Game not found: " + str);
-            });
+            if (str.matches("\\d+")) { // Single index
+                int index = Integer.parseInt(str) - 1;
+                if (index < 0 || index >= filteredList.size()) {
+                    throw new IllegalArgumentException("Index out of range: " + str);
+                }
+                games.add(filteredList.get(index));
+            } else if (str.matches("\\d+-\\d+")) { // Range selection
+                String[] range = str.split("-");
+                int start = Integer.parseInt(range[0]) - 1;
+                int end = Integer.parseInt(range[1]) - 1;
+                if (start < 0 || end >= filteredList.size() || start > end) {
+                    throw new IllegalArgumentException("Invalid range: " + str);
+                }
+                games.addAll(filteredList.subList(start, end + 1));
+            } else { // Add by name
+                Optional<BoardGame> game = filteredList.stream()
+                        .filter(g -> g.getName().equalsIgnoreCase(str))
+                        .findFirst();
+                game.ifPresentOrElse(games::add, () -> {
+                    throw new IllegalArgumentException("Game not found: " + str);
+                });
+            }
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Invalid format: " + str);
         }
@@ -105,7 +121,31 @@ public class GameList implements IGameList {
             return;
         }
 
-        removeGameByName(str);
+        List<String> gameNames = getGameNames();
+
+        try {
+            if (str.matches("\\d+")) { // Single index removal
+                int index = Integer.parseInt(str) - 1;
+                if (index < 0 || index >= gameNames.size()) {
+                    throw new IllegalArgumentException("Index out of range: " + str);
+                }
+                removeGameByName(gameNames.get(index));
+            } else if (str.matches("\\d+-\\d+")) { // Range removal
+                String[] range = str.split("-");
+                int start = Integer.parseInt(range[0]) - 1;
+                int end = Integer.parseInt(range[1]) - 1;
+                if (start < 0 || end >= gameNames.size() || start > end) {
+                    throw new IllegalArgumentException("Invalid range: " + str);
+                }
+                for (int i = start; i <= end; i++) {
+                    removeGameByName(gameNames.get(i));
+                }
+            } else { // Remove by name
+                removeGameByName(str);
+            }
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid format: " + str);
+        }
     }
 
     /**
@@ -115,6 +155,14 @@ public class GameList implements IGameList {
      * @throws IllegalArgumentException If the game is not found.
      */
     private void removeGameByName(String name) {
-        games.removeIf(game -> game.getName().equalsIgnoreCase(name));
+        Iterator<BoardGame> iterator = games.iterator();
+        while (iterator.hasNext()) {
+            BoardGame game = iterator.next();
+            if (game.getName().equalsIgnoreCase(name)) {
+                iterator.remove();
+                return;
+            }
+        }
+        throw new IllegalArgumentException("Game not found: " + name);
     }
 }
