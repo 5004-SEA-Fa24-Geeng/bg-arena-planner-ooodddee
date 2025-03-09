@@ -60,42 +60,52 @@ public class BoardGame implements Comparable<BoardGame> {
         this.yearPublished = yearPublished;
     }
 
+    /** @return the name of the board game. */
     public String getName() {
         return name;
     }
 
+    /** @return the game ID. */
     public int getId() {
         return id;
     }
 
+    /** @return the minimum number of players. */
     public int getMinPlayers() {
         return minPlayers;
     }
 
+    /** @return the maximum number of players. */
     public int getMaxPlayers() {
         return maxPlayers;
     }
 
+    /** @return the maximum play time. */
     public int getMaxPlayTime() {
         return maxPlayTime;
     }
 
+    /** @return the minimum play time. */
     public int getMinPlayTime() {
         return minPlayTime;
     }
 
+    /** @return the difficulty rating. */
     public double getDifficulty() {
         return difficulty;
     }
 
+    /** @return the rank of the game. */
     public int getRank() {
         return rank;
     }
 
+    /** @return the average rating. */
     public double getRating() {
         return averageRating;
     }
 
+    /** @return the year of publication. */
     public int getYearPublished() {
         return yearPublished;
     }
@@ -122,93 +132,6 @@ public class BoardGame implements Comparable<BoardGame> {
         };
     }
 
-    /**
-     * Returns the string value of the game attribute based on the given GameData type.
-     *
-     * @param col The GameData attribute
-     * @return The corresponding string value
-     * @throws IllegalArgumentException If the attribute is not a string
-     */
-    public String getStringValue(GameData col) throws IllegalArgumentException {
-        if (col == GameData.NAME) {
-            return name;
-        }
-        throw new IllegalArgumentException("Invalid string column: " + col);
-    }
-
-    /**
-     * Returns a formatted string containing the game name and the specified attribute value.
-     *
-     * @param col The GameData attribute
-     * @return A formatted string with the game name and the specified attribute
-     */
-    public String toStringWithInfo(GameData col) {
-        return switch (col) {
-            case NAME -> name;
-            case RATING -> String.format("%s (%.2f)", name, averageRating);
-            case DIFFICULTY -> String.format("%s (%.2f)", name, difficulty);
-            case RANK -> String.format("%s (%d)", name, rank);
-            case MIN_PLAYERS -> String.format("%s (%d)", name, minPlayers);
-            case MAX_PLAYERS -> String.format("%s (%d)", name, maxPlayers);
-            case MIN_TIME -> String.format("%s (%d min)", name, minPlayTime);
-            case MAX_TIME -> String.format("%s (%d min)", name, maxPlayTime);
-            case YEAR -> String.format("%s (%d)", name, yearPublished);
-            default -> name;
-        };
-    }
-
-    /**
-     * Returns a string representation of the BoardGame object.
-     *
-     * @return A string containing all game attributes
-     */
-    @Override
-    public String toString() {
-        return "BoardGame{"
-                + "name='" + name + '\''
-                + ", id=" + id
-                + ", minPlayers=" + minPlayers
-                + ", maxPlayers=" + maxPlayers
-                + ", maxPlayTime=" + maxPlayTime
-                + ", minPlayTime=" + minPlayTime
-                + ", difficulty=" + difficulty
-                + ", rank=" + rank
-                + ", averageRating=" + averageRating
-                + ", yearPublished=" + yearPublished
-                + '}';
-    }
-
-    /**
-     * Checks if two BoardGame objects are equal.
-     *
-     * @param obj The object to compare
-     * @return True if the objects are equal, otherwise false
-     */
-    @Override
-    public boolean equals(Object obj) {
-        return EqualsBuilder.reflectionEquals(this, obj,
-                List.of("minPlayers", "maxPlayers", "maxPlayTime", "minPlayTime",
-                        "difficulty", "rank", "averageRating", "yearPublished"));
-    }
-
-    /**
-     * Computes the hash code for the BoardGame object.
-     *
-     * @return The hash code of the object
-     */
-    @Override
-    public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this,
-                List.of("minPlayers", "maxPlayers", "maxPlayTime", "minPlayTime",
-                        "difficulty", "rank", "averageRating", "yearPublished"));
-    }
-
-    /**
-     * Compares two BoardGame objects by name (case-insensitive).
-     *
-     * @param other The other BoardGame object
-     * @return Comparison result based on name
-     */
     @Override
     public int compareTo(BoardGame other) {
         return this.name.compareToIgnoreCase(other.name);
