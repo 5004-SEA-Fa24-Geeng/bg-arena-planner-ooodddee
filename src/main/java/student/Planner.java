@@ -9,11 +9,14 @@ import java.util.stream.Stream;
  */
 public class Planner implements IPlanner {
 
+    /** The original set of board games. */
     private final Set<BoardGame> games;
+    /** The current filtered set of board games. */
     private Set<BoardGame> curGames;
 
     /**
      * Creates a Planner with a given set of board games.
+     *
      * @param games The set of available board games.
      */
     public Planner(Set<BoardGame> games) {
@@ -58,16 +61,21 @@ public class Planner implements IPlanner {
 
     /**
      * Applies a single filter condition.
+     *
      * @param stream The stream of games to filter.
      * @param filter The filter condition.
      * @return The filtered stream of games.
      */
     private Stream<BoardGame> applySingleFilter(Stream<BoardGame> stream, String filter) {
         Operations operator = Operations.getOperatorFromStr(filter);
-        if (operator == null) return stream;
+        if (operator == null) {
+            return stream;
+        }
 
         String[] parts = filter.split(operator.getOperator());
-        if (parts.length != 2) return stream;
+        if (parts.length != 2) {
+            return stream;
+        }
 
         String field = parts[0].trim();
         String value = parts[1].trim();
@@ -79,13 +87,16 @@ public class Planner implements IPlanner {
             return stream;
         }
 
-        return isNumericColumn(column) ?
-                applyNumericFilter(stream, column, operator, value) :
-                applyStringFilter(stream, column, operator, value);
+        if (isNumericColumn(column)) {
+            return applyNumericFilter(stream, column, operator, value);
+        } else {
+            return applyStringFilter(stream, column, operator, value);
+        }
     }
 
     /**
      * Checks if the field is numeric.
+     *
      * @param column The field to check.
      * @return True if the field is numeric, otherwise false.
      */
@@ -98,13 +109,15 @@ public class Planner implements IPlanner {
 
     /**
      * Applies a numeric filter condition.
+     *
      * @param stream The stream of games to filter.
      * @param column The field to filter on.
      * @param operator The comparison operator.
      * @param value The value to compare.
      * @return The filtered stream of games.
      */
-    private Stream<BoardGame> applyNumericFilter(Stream<BoardGame> stream, GameData column, Operations operator, String value) {
+    private Stream<BoardGame> applyNumericFilter(Stream<BoardGame> stream, GameData column,
+                                                 Operations operator, String value) {
         double numericValue;
         try {
             numericValue = Double.parseDouble(value);
@@ -128,13 +141,15 @@ public class Planner implements IPlanner {
 
     /**
      * Applies a string filter condition.
+     *
      * @param stream The stream of games to filter.
      * @param column The field to filter on.
      * @param operator The comparison operator.
      * @param value The value to compare.
      * @return The filtered stream of games.
      */
-    private Stream<BoardGame> applyStringFilter(Stream<BoardGame> stream, GameData column, Operations operator, String value) {
+    private Stream<BoardGame> applyStringFilter(Stream<BoardGame> stream, GameData column,
+                                                Operations operator, String value) {
         return stream.filter(game -> {
             String gameValue = game.getStringValue(column);
             return switch (operator) {
@@ -152,14 +167,17 @@ public class Planner implements IPlanner {
 
     /**
      * Sorts the games based on a specified field.
+     *
      * @param stream The stream of games to sort.
      * @param sortOn The field to sort on.
      * @param ascending True for ascending order, false for descending.
      * @return The sorted stream of games.
      */
-    private Stream<BoardGame> applySorting(Stream<BoardGame> stream, GameData sortOn, boolean ascending) {
+    private Stream<BoardGame> applySorting(Stream<BoardGame> stream, GameData sortOn,
+                                           boolean ascending) {
         Comparator<BoardGame> comparator = switch (sortOn) {
-            case NAME -> Comparator.comparing(game -> game.getName().toLowerCase(), String.CASE_INSENSITIVE_ORDER);
+            case NAME -> Comparator.comparing(game -> game.getName().toLowerCase(),
+                    String.CASE_INSENSITIVE_ORDER);
             case MAX_PLAYERS -> Comparator.comparingInt(BoardGame::getMaxPlayers);
             case MIN_PLAYERS -> Comparator.comparingInt(BoardGame::getMinPlayers);
             case MAX_TIME -> Comparator.comparingInt(BoardGame::getMaxPlayTime);
@@ -173,7 +191,6 @@ public class Planner implements IPlanner {
         if (comparator != null) {
             return ascending ? stream.sorted(comparator) : stream.sorted(comparator.reversed());
         }
-
         return stream;
     }
 }

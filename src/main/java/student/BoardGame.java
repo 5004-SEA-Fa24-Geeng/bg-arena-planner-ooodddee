@@ -5,24 +5,35 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.util.List;
 
 /**
- * Represents a board game with various attributes such as players, playtime, difficulty, rating, and rank.
+ * Represents a board game with attributes such as players, playtime, difficulty, rating, and rank.
  * This class is immutable, meaning all fields are final and can only be accessed through getters.
  */
 public class BoardGame implements Comparable<BoardGame> {
 
-    private final String name; // Game name
-    private final int id; // Unique game identifier
-    private final int minPlayers; // Minimum players required
-    private final int maxPlayers; // Maximum players allowed
-    private final int maxPlayTime; // Maximum play time in minutes
-    private final int minPlayTime; // Minimum play time in minutes
-    private final double difficulty; // Average difficulty rating
-    private final int rank; // Game rank
-    private final double averageRating; // Average user rating
-    private final int yearPublished; // Year the game was published
+    /** Game name. */
+    private final String name;
+    /** Unique game identifier. */
+    private final int id;
+    /** Minimum players required. */
+    private final int minPlayers;
+    /** Maximum players allowed. */
+    private final int maxPlayers;
+    /** Maximum play time in minutes. */
+    private final int maxPlayTime;
+    /** Minimum play time in minutes. */
+    private final int minPlayTime;
+    /** Average difficulty rating. */
+    private final double difficulty;
+    /** Game rank. */
+    private final int rank;
+    /** Average user rating. */
+    private final double averageRating;
+    /** Year the game was published. */
+    private final int yearPublished;
 
     /**
      * Creates a new BoardGame object.
+     *
      * @param name Game name
      * @param id Unique identifier
      * @param minPlayers Minimum players required
@@ -35,7 +46,8 @@ public class BoardGame implements Comparable<BoardGame> {
      * @param yearPublished Year the game was published
      */
     public BoardGame(String name, int id, int minPlayers, int maxPlayers, int minPlayTime,
-                     int maxPlayTime, double difficulty, int rank, double averageRating, int yearPublished) {
+                     int maxPlayTime, double difficulty, int rank,
+                     double averageRating, int yearPublished) {
         this.name = name;
         this.id = id;
         this.minPlayers = minPlayers;
@@ -48,22 +60,52 @@ public class BoardGame implements Comparable<BoardGame> {
         this.yearPublished = yearPublished;
     }
 
-    public String getName() { return name; }
-    public int getId() { return id; }
-    public int getMinPlayers() { return minPlayers; }
-    public int getMaxPlayers() { return maxPlayers; }
-    public int getMaxPlayTime() { return maxPlayTime; }
-    public int getMinPlayTime() { return minPlayTime; }
-    public double getDifficulty() { return difficulty; }
-    public int getRank() { return rank; }
-    public double getRating() { return averageRating; }
-    public int getYearPublished() { return yearPublished; }
+    public String getName() {
+        return name;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public int getMinPlayers() {
+        return minPlayers;
+    }
+
+    public int getMaxPlayers() {
+        return maxPlayers;
+    }
+
+    public int getMaxPlayTime() {
+        return maxPlayTime;
+    }
+
+    public int getMinPlayTime() {
+        return minPlayTime;
+    }
+
+    public double getDifficulty() {
+        return difficulty;
+    }
+
+    public int getRank() {
+        return rank;
+    }
+
+    public double getRating() {
+        return averageRating;
+    }
+
+    public int getYearPublished() {
+        return yearPublished;
+    }
 
     /**
      * Returns the numeric value of the game attribute based on the given GameData type.
-     * Throws an exception if the attribute is not numeric.
+     *
      * @param col The GameData attribute
      * @return The corresponding numeric value
+     * @throws IllegalArgumentException If the attribute is not numeric
      */
     public double getNumericValue(GameData col) throws IllegalArgumentException {
         return switch (col) {
@@ -82,9 +124,10 @@ public class BoardGame implements Comparable<BoardGame> {
 
     /**
      * Returns the string value of the game attribute based on the given GameData type.
-     * Throws an exception if the attribute is not a string.
+     *
      * @param col The GameData attribute
      * @return The corresponding string value
+     * @throws IllegalArgumentException If the attribute is not a string
      */
     public String getStringValue(GameData col) throws IllegalArgumentException {
         if (col == GameData.NAME) {
@@ -95,6 +138,7 @@ public class BoardGame implements Comparable<BoardGame> {
 
     /**
      * Returns a formatted string containing the game name and the specified attribute value.
+     *
      * @param col The GameData attribute
      * @return A formatted string with the game name and the specified attribute
      */
@@ -115,27 +159,28 @@ public class BoardGame implements Comparable<BoardGame> {
 
     /**
      * Returns a string representation of the BoardGame object.
+     *
      * @return A string containing all game attributes
      */
     @Override
     public String toString() {
-        return "BoardGame{" +
-                "name='" + name + '\'' +
-                ", id=" + id +
-                ", minPlayers=" + minPlayers +
-                ", maxPlayers=" + maxPlayers +
-                ", maxPlayTime=" + maxPlayTime +
-                ", minPlayTime=" + minPlayTime +
-                ", difficulty=" + difficulty +
-                ", rank=" + rank +
-                ", averageRating=" + averageRating +
-                ", yearPublished=" + yearPublished +
-                '}';
+        return "BoardGame{"
+                + "name='" + name + '\''
+                + ", id=" + id
+                + ", minPlayers=" + minPlayers
+                + ", maxPlayers=" + maxPlayers
+                + ", maxPlayTime=" + maxPlayTime
+                + ", minPlayTime=" + minPlayTime
+                + ", difficulty=" + difficulty
+                + ", rank=" + rank
+                + ", averageRating=" + averageRating
+                + ", yearPublished=" + yearPublished
+                + '}';
     }
 
     /**
      * Checks if two BoardGame objects are equal.
-     * Ignores fields: minPlayers, maxPlayers, minPlayTime, maxPlayTime, difficulty, rank, rating, yearPublished.
+     *
      * @param obj The object to compare
      * @return True if the objects are equal, otherwise false
      */
@@ -148,7 +193,7 @@ public class BoardGame implements Comparable<BoardGame> {
 
     /**
      * Computes the hash code for the BoardGame object.
-     * Ignores fields: minPlayers, maxPlayers, minPlayTime, maxPlayTime, difficulty, rank, rating, yearPublished.
+     *
      * @return The hash code of the object
      */
     @Override
@@ -160,26 +205,12 @@ public class BoardGame implements Comparable<BoardGame> {
 
     /**
      * Compares two BoardGame objects by name (case-insensitive).
+     *
      * @param other The other BoardGame object
      * @return Comparison result based on name
      */
     @Override
     public int compareTo(BoardGame other) {
         return this.name.compareToIgnoreCase(other.name);
-    }
-
-    /**
-     * Main method for quick testing.
-     * @param args Command line arguments
-     */
-    public static void main(String[] args) {
-        BoardGame bg = new BoardGame("Catan", 1, 3, 4, 60, 30, 2.5, 1, 4.5, 1995);
-        BoardGame bg2 = new BoardGame("Catan", 1, 3, 4, 60, 30, 2.5, 1, 4.5, 1995);
-        BoardGame bg3 = new BoardGame("Catan", 2, 3, 4, 60, 30, 2.5, 1, 4.5, 1995);
-
-        System.out.println(bg);
-        System.out.println(bg.equals(bg) + " " + (bg.hashCode() == bg2.hashCode()));
-        System.out.println(bg.equals(bg2) + " " + (bg.hashCode() == bg2.hashCode()));
-        System.out.println(bg.equals(bg3) + " " + (bg.hashCode() == bg3.hashCode()));
     }
 }
