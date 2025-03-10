@@ -286,8 +286,15 @@ Write a test (in english) that you can picture for the class diagram you have cr
 
 You should feel free to number your brainstorm.
 
-1. Test 1..
-2. Test 2..
+1. GameList Tests:
+    * Test getGameNames():
+        * Add several games and verify that getGameNames() returns them in alphabetical order.
+   * Test clear():
+     * Add games, call clear(), and confirm the game count is zero.
+   * Test addToList() with a specific name:
+       * Add "Chess" using addToList() and verify that only "Chess" is added.
+2. Planner Tests:
+    * Test filter() by name equals: Call filter("name == Chess") and verify that only "Chess" is returned.
 
 
 
@@ -301,7 +308,189 @@ For the final design, you just need to do a single diagram that includes both th
 > [!WARNING]
 > If you resubmit your assignment for manual grading, this is a section that often needs updating. You should double check with every resubmit to make sure it is up to date.
 
+```mermaid
+classDiagram
+   
+    
+    class BoardGame {
+        - String name
+        - int id
+        - int minPlayers
+        - int maxPlayers
+        - int minPlayTime
+        - int maxPlayTime
+        - double difficulty
+        - int rank
+        - double averageRating
+        - int yearPublished
+        + String getName()
+        + int getId()
+        + int getMinPlayers()
+        + int getMaxPlayers()
+        + int getMinPlayTime()
+        + int getMaxPlayTime()
+        + double getDifficulty()
+        + int getRank()
+        + double getRating()
+        + int getYearPublished()
+        + double getNumericValue(GameData col)
+        + String getStringValue(GameData col)
+        + String toStringWithInfo(GameData col)
+        + boolean equals(Object obj)
+        + int hashCode()
+        + int compareTo(BoardGame other)
+    }
 
+    class GameData {
+        <<enumeration>>
+        NAME
+        ID
+        RATING
+        DIFFICULTY
+        RANK
+        MIN_PLAYERS
+        MAX_PLAYERS
+        MIN_TIME
+        MAX_TIME
+        YEAR
+        + String getColumnName()
+        + static GameData fromColumnName(String columnName)
+        + static GameData fromString(String name)
+    }
+
+    class Operations {
+        <<enumeration>>
+        EQUALS
+        NOT_EQUALS
+        GREATER_THAN
+        LESS_THAN
+        GREATER_THAN_EQUALS
+        LESS_THAN_EQUALS
+        CONTAINS
+        + String getOperator()
+        + static Operations fromOperator(String operator)
+        + static Operations getOperatorFromStr(String str)
+    }
+
+    class IGameList {
+        <<interface>>
+        + List<String> getGameNames()
+        + void clear()
+        + int count()
+        + void saveGame(String filename)
+        + void addToList(String str, Stream<BoardGame> filtered)
+        + void removeFromList(String str)
+    }
+
+    class GameList {
+        - Set<BoardGame> games
+        + GameList()
+        + List<String> getGameNames()
+        + void clear()
+        + int count()
+        + void saveGame(String filename)
+        + void addToList(String str, Stream<BoardGame> filtered)
+        + void removeFromList(String str)
+        - void removeGameByName(String name)
+    }
+
+    class IPlanner {
+        <<interface>>
+        + Stream<BoardGame> filter(String filter)
+        + Stream<BoardGame> filter(String filter, GameData sortOn)
+        + Stream<BoardGame> filter(String filter, GameData sortOn, boolean ascending)
+        + void reset()
+    }
+
+    class Planner {
+        - Set<BoardGame> games
+        - Set<BoardGame> curGames
+        + Planner(Set<BoardGame> games)
+        + Stream<BoardGame> filter(String filter)
+        + Stream<BoardGame> filter(String filter, GameData sortOn)
+        + Stream<BoardGame> filter(String filter, GameData sortOn, boolean ascending)
+        + void reset()
+        - Stream<BoardGame> applySingleFilter(Stream<BoardGame> stream, String filter)
+        - boolean isNumericColumn(GameData column)
+        - Stream<BoardGame> applyNumericFilter(Stream<BoardGame> stream, GameData column, Operations operator, String value)
+        - Stream<BoardGame> applyStringFilter(Stream<BoardGame> stream, GameData column, Operations operator, String value)
+        - Stream<BoardGame> applySorting(Stream<BoardGame> stream, GameData sortOn, boolean ascending)
+    }
+
+    class GamesLoader {
+        - static final String DELIMITER
+        - private GamesLoader()
+        + static Set<BoardGame> loadGamesFile(String filename)
+        - static BoardGame toBoardGame(String line, Map<GameData, Integer> columnMap)
+        - static Map<GameData, Integer> processHeader(String header)
+    }
+
+    class ConsoleApp {
+        - static final Scanner IN
+        - static final String DEFAULT_FILENAME
+        - static final Random RND
+        - Scanner current
+        - IGameList gameList
+        - IPlanner planner
+        + ConsoleApp(IGameList gameList, IPlanner planner)
+        + void start()
+        - void randomNumber()
+        - void processHelp()
+        - void processFilter()
+        - static void printFilterStream(Stream<BoardGame> games, GameData sortON)
+        - void processListCommands()
+        - void printCurrentList()
+        - ConsoleText nextCommand()
+        - String remainder()
+        - static String getInput(String format, Object... args)
+        - static void printOutput(String format, Object... output)
+    }
+
+    class ConsoleText {
+        <<enumeration>>
+        WELCOME
+        HELP
+        INVALID
+        GOODBYE
+        PROMPT
+        NO_FILTER
+        NO_GAMES_LIST
+        FILTERED_CLEAR
+        LIST_HELP
+        FILTER_HELP
+        INVALID_LIST
+        EASTER_EGG
+        CMD_EASTER_EGG
+        CMD_EXIT
+        CMD_HELP
+        CMD_QUESTION
+        CMD_FILTER
+        CMD_LIST
+        CMD_SHOW
+        CMD_ADD
+        CMD_REMOVE
+        CMD_CLEAR
+        CMD_SAVE
+        CMD_OPTION_ALL
+        CMD_SORT_OPTION
+        CMD_SORT_OPTION_DIRECTION_ASC
+        CMD_SORT_OPTION_DIRECTION_DESC
+        + static ConsoleText fromString(String str)
+    }
+
+ 
+    GameList --|> IGameList
+    Planner --|> IPlanner
+    Planner --> GameData
+    Planner --> Operations
+    Planner --> BoardGame
+    GamesLoader --> BoardGame
+    GamesLoader --> GameData
+    ConsoleApp --> IGameList
+    ConsoleApp --> IPlanner
+    ConsoleApp --> ConsoleText
+
+```
 
 
 
@@ -311,3 +500,5 @@ For the final design, you just need to do a single diagram that includes both th
 > The value of reflective writing has been highly researched and documented within computer science, from learning to information to showing higher salaries in the workplace. For this next part, we encourage you to take time, and truly focus on your retrospective.
 
 Take time to reflect on how your design has changed. Write in *prose* (i.e. do not bullet point your answers - it matters in how our brain processes the information). Make sure to include what were some major changes, and why you made them. What did you learn from this process? What would you do differently next time? What was the most challenging part of this process? For most students, it will be a paragraph or two. 
+
+* The design evolved significantly as I refined functionality and improved class cohesion. Initially, filtering and sorting were rigid, but I introduced the Operations enum to support flexible filtering with operators like >, <, and ==. The Planner class was also refactored, separating numeric and string filtering for better maintainability. The GameList class improved error handling, especially in user input parsing. I learned that real-world constraints often require more adaptable designs. Next time, I would focus on modularity earlier. The biggest challenge was balancing flexibility with simplicity while keeping the system intuitive.
